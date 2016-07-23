@@ -6,6 +6,8 @@ Role for manage printers in CUPS Printing System.
 Example configuration
 ------------------------
 
+## Global configuration:
+
 ```yaml
 ---
 ## Global
@@ -66,4 +68,65 @@ cups_lpadmin_ttp245_socket_options: 'waiteof=false&snmp=false'
 tsc_ttp245_net_4x1: "{{ hostvars[inventory_hostname]['cups_lpadmin_lpd_proto'] + hostvars[inventory_hostname]['tsc_ttp245_address'] + '/' + hostvars[inventory_hostname]['tsc_ttp245_queue_4x1'] + '?' + hostvars[inventory_hostname]['cups_lpadmin_ttp245_lpd_options'] }}"
 tsc_ttp245_net_4x3: "{{ hostvars[inventory_hostname]['cups_lpadmin_lpd_proto'] + hostvars[inventory_hostname]['tsc_ttp245_address'] + '/' + hostvars[inventory_hostname]['tsc_ttp245_queue_4x3'] + '?' + hostvars[inventory_hostname]['cups_lpadmin_ttp245_lpd_options'] }}"
 
+```
+
+## Group/host configuration:
+
+**HP M1536dnf MFP, via ethernet example**
+
+```yaml
+---
+hp_m1536_address: "192.168.1.1"
+
+cups_lpadmin:
+  - name: "{{ hostvars[inventory_hostname]['cups_lpadmin_m1536_friendly_name'] }}"
+    uri: "{{ hp_m1536_net }}"
+    model: "{{ hostvars[inventory_hostname]['cups_lpadmin_m1536_driver'] }}"
+    options:
+      media: "{{ hostvars[inventory_hostname]['cups_lpadmin_media'] }}"
+```
+
+**HP P2055, via IPP example**
+
+```yaml
+---
+hp_p2055_transport: "{{ hp_p2055_net }}"
+hp_p2055_address: "192.168.1.1" # another CUPS instance with shared HP_P2055
+
+cups_lpadmin:
+  - name: "{{ hostvars[inventory_hostname]['cups_lpadmin_p2055_friendly_name'] }}"
+    uri: "{{ hp_p2055_transport }}"
+    options:
+      media: "{{ hostvars[inventory_hostname]['cups_lpadmin_media'] }}"
+```
+
+**HP P2055, via USB example**
+
+```yaml
+---
+hp_p2055_address: 'S1728P7' # take address via lsusb or lsusb.py
+hp_p2055_transport: "{{ hp_p2055_usb }}"
+
+cups_lpadmin:
+  - name: "{{ hostvars[inventory_hostname]['cups_lpadmin_p2055_friendly_name'] }}"
+    uri: "{{ hp_p2055_transport }}"
+    model: "{{ hostvars[inventory_hostname]['cups_lpadmin_p2055_driver'] }}"
+    default: "true"
+    shared: "true"
+    options:
+      media: "{{ hostvars[inventory_hostname]['cups_lpadmin_media'] }}"
+```
+
+**TSC TTP-245C, via LPD example**
+
+```yaml
+---
+tsc_ttp245_address: '192.168.128.213'
+tsc_ttp245_queue_4x1: "TSC5"
+
+cups_lpadmin:
+  - name: "{{ hostvars[inventory_hostname]['cups_lpadmin_ttp245_friendly_name_4x1'] }}"
+    driver: "ppd"
+    uri: "{{ tsc_ttp245_net_4x1 }}"
+    model: "{{ hostvars[inventory_hostname]['cups_lpadmin_ttp245_driver_4x1'] }}"
 ```
