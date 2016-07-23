@@ -4,7 +4,7 @@
     ppd_temp_place: "tmp"
 - name: Prepare PPD
   copy:
-    src: "{{ item.model }}"
+    src: "{{ hostvars[inventory_hostname]['cups_lpadmin_ppd_source'] + '/' + item.model }}"
     dest: "{{ '/' + vars['ppd_temp_place'] + '/' + item.model }}"
     owner: "root"
     group: "root"
@@ -12,8 +12,8 @@
     directory_mode: "0755"
     force: "yes"
   with_items: "{{ hostvars[inventory_hostname]['cups_lpadmin'] }}"
-  when: "item.driver is defined and item.driver == 'ppd'"
-- name: Purge printers
+  when: "(item.driver is defined and item.driver == 'ppd') and ({{ hostvars[inventory_hostname]['cups_lpadmin_mgmt'] is defined and hostvars[inventory_hostname]['cups_lpadmin_mgmt'] == 'true' }})"
+- name: Purge all
   cups_lpadmin:
     purge: "true"
   when: "hostvars[inventory_hostname]['cups_lpadmin_purge'] is defined and hostvars[inventory_hostname]['cups_lpadmin_purge'] == 'true'"
@@ -32,3 +32,4 @@
     info: "{{ item.info | default('') }}"
     options: "{{ item.options | default('{ }') }}"
   with_items: "{{ hostvars[inventory_hostname]['cups_lpadmin'] }}"
+  when: "{{ hostvars[inventory_hostname]['cups_lpadmin_mgmt'] is defined and hostvars[inventory_hostname]['cups_lpadmin_mgmt'] == 'true' }}"

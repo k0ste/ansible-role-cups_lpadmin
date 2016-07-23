@@ -9,7 +9,9 @@ Example configuration
 ```yaml
 ---
 ## Global
+cups_lpadmin_mgmt: 'true'
 cups_lpadmin_purge: 'true'
+cups_lpadmin_ppd_source: '../../files/cups_lpadmin' # /roles/role -> ansible/files
 cups_lpadmin_ipp_port: ':631'
 cups_lpadmin_ipp_proto: 'ipp://'
 cups_lpadmin_lpd_proto: 'lpd://'
