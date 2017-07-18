@@ -1,35 +1,9 @@
 ---
-- name: Set local facts
-  set_fact:
-    ppd_temp_place: "tmp"
-- name: Prepare PPD
-  copy:
-    src: "{{ hostvars[inventory_hostname]['cups_lpadmin_ppd_source'] + '/' + item.model }}"
-    dest: "{{ '/' + vars['ppd_temp_place'] + '/' + item.model }}"
-    owner: "root"
-    group: "root"
-    mode: "0644"
-    directory_mode: "0755"
-    force: "yes"
-  with_items: "{{ hostvars[inventory_hostname]['cups_lpadmin'] }}"
-  when: "(item.driver is defined and item.driver == 'ppd') and ({{ hostvars[inventory_hostname]['cups_lpadmin_mgmt'] is defined and hostvars[inventory_hostname]['cups_lpadmin_mgmt'] == 'true' }})"
-- name: Purge all
-  cups_lpadmin:
-    purge: "true"
-  when: "hostvars[inventory_hostname]['cups_lpadmin_purge'] is defined and hostvars[inventory_hostname]['cups_lpadmin_purge'] == 'true'"
-- name: Deploy printers
-  cups_lpadmin:
-    name: "{{ item.name }}"
-    state: "{{ item.state | default('present') }}"
-    printer_or_class: "{{ item.printer_or_class | default('printer') }}"
-    uri: "{{ item.uri }}"
-    driver: "{{ item.driver | default('model') }}"
-    model: "{% if item.driver is defined and item.driver == 'ppd' %}{{ '/' + vars['ppd_temp_place'] + '/' + item.model }}{% else %}{{ item.model | default('raw') }}{% endif %}"
-    enabled: "{{ item.enabled | default('true') }}"
-    shared: "{{ item.shared | default('false') }}"
-    default: "{{ item.default | default('false') }}"
-    location: "{{ item.location | default('') }}"
-    info: "{{ item.info | default('') }}"
-    options: "{{ item.options | default('{ }') }}"
-  with_items: "{{ hostvars[inventory_hostname]['cups_lpadmin'] }}"
-  when: "{{ hostvars[inventory_hostname]['cups_lpadmin_mgmt'] is defined and hostvars[inventory_hostname]['cups_lpadmin_mgmt'] == 'true' }}"
+- include: pre_requisite.yml
+  when:
+  - "hostvars[inventory_hostname]['cups_lpadmin_mgmt'] is defined"
+  - "hostvars[inventory_hostname]['cups_lpadmin_mgmt'] == 'true'"
+- include: deploy_lpadmin.yml
+  when:
+  - "hostvars[inventory_hostname]['cups_lpadmin_mgmt'] is defined"
+  - "hostvars[inventory_hostname]['cups_lpadmin_mgmt'] == 'true'"

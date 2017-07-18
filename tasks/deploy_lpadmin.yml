@@ -1,0 +1,22 @@
+---
+- name: cups_lpadmin | Deploy printers
+  cups_lpadmin:
+    name: "{{ item.name }}"
+    state: "{{ item.state | default('present') }}"
+    printer_or_class: "{{ item.printer_or_class | default('printer') }}"
+    uri: "{{ item.uri }}"
+    driver: "{{ item.driver | default('model') }}"
+    model: "{% if item.driver is defined and item.driver == 'ppd' %}
+            {{ '/' + vars['ppd_temp_place'] + '/' + item.model }}
+            {% else %}
+            {{ item.model | default('raw') }}
+            {% endif %}"
+    enabled: "{{ item.enabled | default('true') }}"
+    shared: "{{ item.shared | default('false') }}"
+    default: "{{ item.default | default('false') }}"
+    location: "{{ item.location | default('') }}"
+    info: "{{ item.info | default('') }}"
+    options: "{{ item.options | default('{ }') }}"
+  with_items: "{{ hostvars[inventory_hostname]['cups_lpadmin'] }}"
+  loop_control:
+    label: "{{ item.name }}"
