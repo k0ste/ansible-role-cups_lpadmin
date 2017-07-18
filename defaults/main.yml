@@ -1,2 +1,3 @@
 ---
-cups_lpadmin_purge: 'true'
+cups_lpadmin_mgmt: 'true'
+cups_lpadmin_purge: 'false'
