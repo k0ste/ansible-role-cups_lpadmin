@@ -7,9 +7,9 @@
     uri: "{{ item.uri }}"
     driver: "{{ item.driver | default('model') }}"
     model: "{% if item.driver is defined and item.driver == 'ppd' %}
-            {{ '/' + vars['ppd_temp_place'] + '/' + item.model }}
+            {{- vars['ppd_temp_place'] + '/' + item.model -}}
             {% else %}
-            {{ item.model | default('raw') }}
+            {{- item.model | default('raw') -}}
             {% endif %}"
     enabled: "{{ item.enabled | default('true') }}"
     shared: "{{ item.shared | default('false') }}"
