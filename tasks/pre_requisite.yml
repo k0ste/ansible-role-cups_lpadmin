@@ -4,7 +4,8 @@
     ppd_temp_place: "/tmp"
 - name: cups_lpadmin | Prepare PPDs
   copy:
-    src: "{{ hostvars[inventory_hostname]['cups_lpadmin_ppd_source'] + '/' + item.model }}"
+    src: "{{ hostvars[inventory_hostname]['cups_lpadmin_ppd_source'] + '/' +
+             item.model }}"
     dest: "{{ vars['ppd_temp_place'] + '/' + item.model }}"
     owner: "root"
     group: "root"
