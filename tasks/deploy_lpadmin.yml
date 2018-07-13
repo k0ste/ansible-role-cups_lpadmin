@@ -17,6 +17,6 @@
     location: "{{ item.location | default('') }}"
     info: "{{ item.info | default('') }}"
     options: "{{ item.options | default('{ }') }}"
-  with_items: "{{ hostvars[inventory_hostname]['cups_lpadmin'] }}"
+  loop: "{{ hostvars[inventory_hostname]['cups_lpadmin'] | flatten(levels=1) }}"
   loop_control:
     label: "{{ item.name }}"

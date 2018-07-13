@@ -2,8 +2,11 @@
 
 Role for manage printers in CUPS Printing System.
 
-## Example configuration
+## Requirements
 
+* Ansible 2.5+;
+
+## Example configuration
 #### Global configuration:
 
 ```yaml

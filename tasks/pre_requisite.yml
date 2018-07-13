@@ -5,21 +5,21 @@
 - name: cups_lpadmin | Prepare PPDs
   copy:
     src: "{{ hostvars[inventory_hostname]['cups_lpadmin_ppd_source'] + '/' +
-             item.model }}"
+      item.model }}"
     dest: "{{ vars['ppd_temp_place'] + '/' + item.model }}"
     owner: "root"
     group: "root"
     mode: "0644"
     directory_mode: "0755"
     force: "yes"
-  with_items: "{{ hostvars[inventory_hostname]['cups_lpadmin'] }}"
+  loop: "{{ hostvars[inventory_hostname]['cups_lpadmin'] | flatten(levels=1) }}"
+  loop_control:
+    label: "{{ item.name }}"
   when:
   - "item.driver is defined"
   - "item.driver == 'ppd'"
   - "hostvars[inventory_hostname]['cups_lpadmin_mgmt'] is defined"
   - "hostvars[inventory_hostname]['cups_lpadmin_mgmt'] == 'true'"
-  loop_control:
-    label: "{{ item.name }}"
 - name: cups_lpadmin | Purge all printers
   cups_lpadmin:
     purge: "true"
