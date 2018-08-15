@@ -7,9 +7,9 @@
     uri: "{{ item.uri }}"
     driver: "{{ item.driver | default('model') }}"
     model: "{% if item.driver is defined and item.driver == 'ppd' %}
-            {{- vars['ppd_temp_place'] + '/' + item.model -}}
+              {{- vars['cups_lpadmin_temp_path'] + '/' + item.model -}}
             {% else %}
-            {{- item.model | default('raw') -}}
+              {{- item.model | default('raw') -}}
             {% endif %}"
     enabled: "{{ item.enabled | default('true') }}"
     shared: "{{ item.shared | default('false') }}"
@@ -17,6 +17,6 @@
     location: "{{ item.location | default('') }}"
     info: "{{ item.info | default('') }}"
     options: "{{ item.options | default('{ }') }}"
-  loop: "{{ hostvars[inventory_hostname]['cups_lpadmin'] | flatten(levels=1) }}"
+  loop: "{{ vars['cups_lpadmin_cups_settings'] | flatten(levels=1) }}"
   loop_control:
     label: "{{ item.name }}"

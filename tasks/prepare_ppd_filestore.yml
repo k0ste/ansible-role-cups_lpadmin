@@ -1,0 +1,20 @@
+---
+- name: cups_lpadmin | Prepare ppps
+  copy:
+    src: "{% if vars['cups_lpadmin_ppd_storage_type'] == 's3' %}
+            {{- vars['cups_lpadmin_temp_path'] ~ '/' ~ item.model -}}
+          {% elif vars['cups_lpadmin_ppd_storage_type'] == 'file' %}
+            {{- vars['cups_lpadmin_ppd_storage_source'] ~ '/' ~ item.model -}}
+          {% endif %}"
+    dest: "{{ vars['cups_lpadmin_temp_path'] ~ '/' ~ item.model }}"
+    mode: "0644"
+    force: "yes"
+  loop: "{{ vars['cups_lpadmin_cups_settings'] | flatten(levels=1) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  diff: "false"
+  register: "cups_lpadmin_prepared_ppd"
+  notify: "Cleanup ppds"
+  when:
+  - "item.driver is defined"
+  - "item.driver == 'ppd'"

@@ -1,0 +1,3 @@
+---
+cups_lpadmin_package: 'cups'
+cups_lpadmin_service: 'cups.service'

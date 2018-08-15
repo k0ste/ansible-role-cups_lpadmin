@@ -1,0 +1,28 @@
+---
+- name: cups_lpadmin | Install the required packages in Redhat derivatives
+  yum:
+    name: "{{ hostvars[inventory_hostname]['cups_lpadmin_package'] }}"
+    state: "installed"
+  notify:
+  - "Start cupsd"
+  when:
+  - "hostvars[inventory_hostname]['ansible_os_family'] == 'RedHat'"
+- name: cups_lpadmin | Install the required packages in Debian derivatives
+  apt:
+    name: "{{ hostvars[inventory_hostname]['cups_lpadmin_package'] }}"
+    state: "installed"
+    update_cache: "yes"
+  notify:
+  - "Start cupsd"
+  when:
+  - "hostvars[inventory_hostname]['ansible_os_family'] == 'Debian'"
+- name: cups_lpadmin | Install the required packages in ArchLinux derivatives
+  pacman:
+    name: "{{ hostvars[inventory_hostname]['cups_lpadmin_package'] }}"
+    state: "installed"
+    update_cache: "yes"
+  notify:
+  - "Start cupsd"
+  when:
+  - "hostvars[inventory_hostname]['ansible_os_family'] == 'Archlinux'"
+- meta: "flush_handlers"

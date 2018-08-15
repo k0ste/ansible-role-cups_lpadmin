@@ -1,0 +1,14 @@
+---
+- name: Start cupsd
+  service:
+    name: "{{ hostvars[inventory_hostname]['cups_lpadmin_service'] }}"
+    state: "started"
+- name: Cleanup ppds
+  file:
+    path: "{{ item.dest }}"
+    state: "absent"
+  loop: "{{ vars['cups_lpadmin_prepared_ppd']['results'] }}"
+  loop_control:
+    label: "{{ item._ansible_item_label }}"
+  when:
+  - "item.skipped is not defined"

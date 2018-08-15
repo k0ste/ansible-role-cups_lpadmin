@@ -1,28 +1,21 @@
 ---
+- name: cups_lpadmin | Add the OS specific variables
+  include_vars: "{{
+    hostvars[inventory_hostname]['ansible_os_family'] + '.yml' }}"
 - name: cups_lpadmin | Set local facts
   set_fact:
-    ppd_temp_place: "/tmp"
-- name: cups_lpadmin | Prepare PPDs
-  copy:
-    src: "{{ hostvars[inventory_hostname]['cups_lpadmin_ppd_source'] + '/' +
-      item.model }}"
-    dest: "{{ vars['ppd_temp_place'] + '/' + item.model }}"
-    owner: "root"
-    group: "root"
-    mode: "0644"
-    directory_mode: "0755"
-    force: "yes"
-  loop: "{{ hostvars[inventory_hostname]['cups_lpadmin'] | flatten(levels=1) }}"
-  loop_control:
-    label: "{{ item.name }}"
-  when:
-  - "item.driver is defined"
-  - "item.driver == 'ppd'"
-  - "hostvars[inventory_hostname]['cups_lpadmin_mgmt'] is defined"
-  - "hostvars[inventory_hostname]['cups_lpadmin_mgmt'] == 'true'"
-- name: cups_lpadmin | Purge all printers
-  cups_lpadmin:
-    purge: "true"
-  when:
-  - "hostvars[inventory_hostname]['cups_lpadmin_purge'] is defined"
-  - "hostvars[inventory_hostname]['cups_lpadmin_purge'] == 'true'"
+    cups_lpadmin_temp_path: "/tmp"
+    cups_lpadmin_ppd_storage_type: "{{
+      hostvars[inventory_hostname]['cups_lpadmin'] |
+      json_query('[].ppd_storage[].storage_type | [0]') }}"
+    cups_lpadmin_ppd_storage_source: "{{
+      hostvars[inventory_hostname]['cups_lpadmin'] |
+      json_query('[].ppd_storage[].storage_source | [0]') }}"
+    cups_lpadmin_cups_settings: "{{
+      hostvars[inventory_hostname]['cups_lpadmin'] |
+      json_query('[].settings[]') }}"
+- name: cups_lpadmin | Assert that storage type have proper value
+  assert:
+    that: "vars['cups_lpadmin_ppd_storage_type'] in ['file', 's3']"
+    msg: "'ppd_storage.storage_type' have unknown value.
+      Should be 'file' or 's3'"

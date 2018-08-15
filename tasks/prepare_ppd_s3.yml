@@ -1,0 +1,41 @@
+---
+- name: cups_lpadmin | Get ppds urls from S3
+  local_action:
+    module: "aws_s3"
+    aws_access_key: "{{ item.1.aws_access_key | default(omit) }}"
+    aws_secret_key: "{{ item.1.aws_secret_key | default(omit) }}"
+    bucket: "{{ item.1.bucket | default(omit) }}"
+    expiration: "{{ item.1.expiration | default(omit) }}"
+    ignore_nonexistent_bucket: "true"
+    rgw: "{{ item.1.rgw | default(omit) }}"
+    s3_url: "{{ item.1.s3_url | default(omit) }}"
+    validate_certs: "{{ item.1.validate_certs | default(omit) }}"
+    region: "{{ item.1.region | default(omit) }}"
+    profile: "{{ item.1.profile | default(omit) }}"
+    mode: "geturl"
+    object: "{{ '/' ~ item.1.object_prefix ~ '/' ~ item.0.model }}"
+  loop: "{{ cups_lpadmin_cups_settings |
+    product(cups_lpadmin_ppd_storage_source) | list | flatten(levels=1) }}"
+  loop_control:
+    label: "{{ item.0.name }}"
+  register: "cups_lpadmin_ppd_s3"
+  run_once: "true"
+  when:
+  - "item.0.driver is defined"
+  - "item.0.driver == 'ppd'"
+- name: cups_lpadmin | Download ppds from S3
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ vars['cups_lpadmin_temp_path'] }}"
+    mode: "0644"
+    force: "yes"
+  loop: "{{ vars['cups_lpadmin_ppd_s3']['results'] | flatten(levels=1) }}"
+  loop_control:
+    label: "{{ item._ansible_item_label }}"
+  register: "cups_lpadmin_prepared_ppd"
+  notify:
+  - "Cleanup ppds"
+  when:
+  - "vars['cups_lpadmin_ppd_s3'] is defined"
+  - "vars['cups_lpadmin_ppd_s3'] != []"
+  - "item.skipped is not defined"

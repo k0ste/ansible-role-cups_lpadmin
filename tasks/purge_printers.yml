@@ -1,0 +1,4 @@
+---
+- name: cups_lpadmin | Purge all printers
+  cups_lpadmin:
+    purge: "true"
