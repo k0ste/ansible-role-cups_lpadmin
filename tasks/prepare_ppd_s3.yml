@@ -15,7 +15,7 @@
     mode: "geturl"
     object: "{{ '/' ~ item.1.object_prefix ~ '/' ~ item.0.model }}"
   loop: "{{ cups_lpadmin_cups_settings |
-    product(cups_lpadmin_ppd_storage_source) | list | flatten(levels=1) }}"
+    product(cups_lpadmin_ppd_storage_source) | list }}"
   loop_control:
     label: "{{ item.0.name }}"
   register: "cups_lpadmin_ppd_s3"
