@@ -7,8 +7,8 @@
   file:
     path: "{{ item.dest }}"
     state: "absent"
-  loop: "{{ vars['cups_lpadmin_prepared_ppd']['results'] }}"
+  loop: "{{ vars['cups_lpadmin_prepared_ppd']['results'] | flatten(levels=1) }}"
   loop_control:
-    label: "{{ item._ansible_item_label }}"
+    label: "{{ item['item'] | combine | json_query('name') }}"
   when:
   - "item.skipped is not defined"

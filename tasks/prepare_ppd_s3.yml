@@ -32,7 +32,7 @@
     force: "yes"
   loop: "{{ vars['cups_lpadmin_ppd_s3']['results'] | flatten(levels=1) }}"
   loop_control:
-    label: "{{ item._ansible_item_label }}"
+    label: "{{ item['item'] | combine | json_query('name') }}"
   register: "cups_lpadmin_prepared_ppd"
   notify:
   - "Cleanup ppds"
