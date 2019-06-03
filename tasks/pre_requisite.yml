@@ -19,3 +19,4 @@
     that: "vars['cups_lpadmin_ppd_storage_type'] in ['file', 's3']"
     msg: "'ppd_storage.storage_type' have unknown value.
       Should be 'file' or 's3'"
+    quiet: "true"
