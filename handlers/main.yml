@@ -5,10 +5,10 @@
     state: "started"
 - name: Cleanup ppds
   file:
-    path: "{{ item.dest }}"
+    path: "{{ item['dest'] }}"
     state: "absent"
   loop: "{{ vars['cups_lpadmin_prepared_ppd']['results'] | flatten(levels=1) }}"
   loop_control:
-    label: "{{ item['item'] | combine | json_query('name') }}"
+    label: "{{ item['item']['item'] | combine | json_query('name') }}"
   when:
   - "item.skipped is not defined"

@@ -26,7 +26,7 @@
   - "item.0.driver == 'ppd'"
 - name: cups_lpadmin | Download ppds from S3
   get_url:
-    url: "{{ item.url }}"
+    url: "{{ item['url'] }}"
     dest: "{{ vars['cups_lpadmin_temp_path'] }}"
     mode: "0644"
   loop: "{{ vars['cups_lpadmin_ppd_s3']['results'] | flatten(levels=1) }}"
