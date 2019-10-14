@@ -1,4 +1,12 @@
 ---
+- name: cups_lpadmin | Check settings definition (most user errors catches at this step)
+  debug:
+    msg: "{{ item }}"
+    verbosity: "3"
+  loop: "{{ cups_lpadmin_cups_settings |
+    product(cups_lpadmin_ppd_storage_source) | list }}"
+  loop_control:
+    label: "{{ item.0.name }}"
 - name: cups_lpadmin | Get ppds urls from S3
   local_action:
     module: "aws_s3"
