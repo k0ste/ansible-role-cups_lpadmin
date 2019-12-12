@@ -10,5 +10,6 @@
   loop: "{{ vars['cups_lpadmin_prepared_ppd']['results'] | flatten(levels=1) }}"
   loop_control:
     label: "{{ item['item']['item'] | combine | json_query('name') }}"
+  diff: "false"
   when:
   - "item.skipped is not defined"
